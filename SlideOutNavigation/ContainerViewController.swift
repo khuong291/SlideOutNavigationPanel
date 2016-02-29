@@ -20,7 +20,12 @@ class ContainerViewController: UIViewController {
     var centerNavigationController: UINavigationController!
     var centerViewController: CenterViewController!
 
-    var currentState: SlideOutState = .BothCollapsed
+    var currentState: SlideOutState = .BothCollapsed {
+        didSet {
+            let shouldShowShadow = currentState != .BothCollapsed
+            showShadowForCenterViewController(shouldShowShadow)
+        }
+    }
     var leftViewController: SidePanelViewController?
 
     let centerPanelExpandedOffset: CGFloat = 60
@@ -110,9 +115,17 @@ extension ContainerViewController: CenterViewControllerDelegate {
 
 
     func animateCenterPanelXPosition(targetPosition targetPosition: CGFloat, completion: ((Bool) -> Void)! = nil) {
-        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .CurveEaseInOut, animations: {
+        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: .CurveEaseInOut, animations: {
             self.centerNavigationController.view.frame.origin.x = targetPosition
             }, completion: completion)
+    }
+
+    func showShadowForCenterViewController(shouldShowShadow: Bool) {
+        if shouldShowShadow {
+            centerNavigationController.view.layer.shadowOpacity = 0.8
+        } else {
+            centerNavigationController.view.layer.shadowOpacity = 0.0
+        }
     }
 
     func animateRightPanel(shouldExpand shouldExpand: Bool) {
