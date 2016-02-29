@@ -42,6 +42,9 @@ class ContainerViewController: UIViewController {
         addChildViewController(centerNavigationController)
 
         centerNavigationController.didMoveToParentViewController(self)
+
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: "handlePanGesture:")
+        centerNavigationController.view.addGestureRecognizer(panGestureRecognizer)
     }
 
 }
@@ -165,5 +168,40 @@ extension ContainerViewController: CenterViewControllerDelegate {
                 self.rightViewController = nil
             }
         }
+    }
+}
+
+extension ContainerViewController: UIGestureRecognizerDelegate {
+    func handlePanGesture(recognizer: UIPanGestureRecognizer) {
+        let gestureIsDraggingFromLeftToRight = recognizer.velocityInView(view).x > 0
+
+        switch recognizer.state {
+        case .Began:
+            if currentState == .BothCollapsed {
+                if gestureIsDraggingFromLeftToRight {
+                    addLeftPanelViewController()
+                } else {
+                    addRightPanelViewController()
+                }
+            }
+
+            showShadowForCenterViewController(true)
+
+        case .Changed:
+            recognizer.view?.center.x = recognizer.view!.center.x + recognizer.translationInView(view).x
+            recognizer.setTranslation(CGPointZero, inView: view)
+
+        case .Ended:
+            if leftViewController != nil {
+                let hasMovedGreaterThanHalfway = recognizer.view!.center.x > view.bounds.size.width
+                animateLeftPanel(shouldExpand: hasMovedGreaterThanHalfway)
+            } else if rightViewController != nil {
+                let hasMovedGreaterThanHaflway = recognizer.view?.center.x < 0
+                animateRightPanel(shouldExpand: hasMovedGreaterThanHaflway)
+            }
+
+        default: break
+        }
+
     }
 }
