@@ -27,6 +27,7 @@ class ContainerViewController: UIViewController {
         }
     }
     var leftViewController: SidePanelViewController?
+    var rightViewController: SidePanelViewController?
 
     let centerPanelExpandedOffset: CGFloat = 60
 
@@ -75,7 +76,13 @@ extension ContainerViewController: CenterViewControllerDelegate {
     }
 
     func toggleRightPanel() {
+        let notAlreadyExpanded = (currentState != .RightPanelExpanded)
 
+        if notAlreadyExpanded {
+            addRightPanelViewController()
+        }
+
+        animateRightPanel(shouldExpand: notAlreadyExpanded)
     }
 
     func addLeftPanelViewController() {
@@ -95,7 +102,12 @@ extension ContainerViewController: CenterViewControllerDelegate {
     }
 
     func addRightPanelViewController() {
+        if rightViewController == nil {
+            rightViewController = UIStoryboard.rightViewController()
+            rightViewController?.animals = Animal.allDogs()
 
+            addChildSidePanelController(rightViewController!)
+        }
     }
 
     func animateLeftPanel(shouldExpand shouldExpand: Bool) {
@@ -129,6 +141,17 @@ extension ContainerViewController: CenterViewControllerDelegate {
     }
 
     func animateRightPanel(shouldExpand shouldExpand: Bool) {
-        
+        if shouldExpand {
+            currentState = .RightPanelExpanded
+
+            animateCenterPanelXPosition(targetPosition: -CGRectGetWidth(centerNavigationController.view.frame) + centerPanelExpandedOffset)
+        } else {
+            animateCenterPanelXPosition(targetPosition: 0) {_ in
+                self.currentState = .BothCollapsed
+
+                self.rightViewController?.view.removeFromSuperview()
+                self.rightViewController = nil
+            }
+        }
     }
 }
