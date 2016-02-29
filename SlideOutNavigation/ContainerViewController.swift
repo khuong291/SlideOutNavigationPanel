@@ -23,6 +23,8 @@ class ContainerViewController: UIViewController {
         centerNavigationController = UINavigationController(rootViewController: centerViewController)
         view.addSubview(centerNavigationController.view)
         addChildViewController(centerNavigationController)
+
+        centerNavigationController.didMoveToParentViewController(self)
     }
 
 }
@@ -42,4 +44,31 @@ private extension UIStoryboard {
         return mainStoryboard().instantiateViewControllerWithIdentifier("CenterViewController") as? CenterViewController
     }
     
+}
+
+// MARK: CenterViewController delegate
+extension ContainerViewController: CenterViewControllerDelegate {
+    func toggleLeftPanel() {
+
+    }
+
+    func toggleRightPanel() {
+
+    }
+
+    func addLeftPanelViewController() {
+
+    }
+
+    func addRightPanelViewController() {
+
+    }
+
+    func animateLeftPanel(shouldExpand shouldExpand: Bool) {
+
+    }
+
+    func animateRightPanel(shouldExpand shouldExpand: Bool) {
+        
+    }
 }
