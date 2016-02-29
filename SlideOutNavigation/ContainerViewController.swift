@@ -85,6 +85,17 @@ extension ContainerViewController: CenterViewControllerDelegate {
         animateRightPanel(shouldExpand: notAlreadyExpanded)
     }
 
+    func collapseSidePanels() {
+        switch currentState {
+        case .RightPanelExpanded:
+            toggleRightPanel()
+        case .LeftPanelExpanded:
+            toggleLeftPanel()
+        default:
+            break
+        }
+    }
+
     func addLeftPanelViewController() {
         if leftViewController == nil {
             leftViewController = UIStoryboard.leftViewController()
@@ -95,6 +106,7 @@ extension ContainerViewController: CenterViewControllerDelegate {
     }
 
     func addChildSidePanelController(sidePanelController: SidePanelViewController) {
+        sidePanelController.delegate = centerViewController
         view.insertSubview(sidePanelController.view, atIndex: 0)
 
         addChildViewController(sidePanelController)
@@ -127,7 +139,7 @@ extension ContainerViewController: CenterViewControllerDelegate {
 
 
     func animateCenterPanelXPosition(targetPosition targetPosition: CGFloat, completion: ((Bool) -> Void)! = nil) {
-        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: .CurveEaseInOut, animations: {
+        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .CurveEaseInOut, animations: {
             self.centerNavigationController.view.frame.origin.x = targetPosition
             }, completion: completion)
     }
